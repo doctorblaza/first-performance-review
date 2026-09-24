@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <link rel="icon" href="data:," />
+  <title>第一次绩效评估</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#17201d;--muted:#66716c;--paper:#f5f6f3;--white:#fff;--line:#d8ddd8;
+      --green:#165a43;--green2:#e4efe9;--amber:#9a5b12;--amber-bg:#fff3db;--red:#8d2e2e;
+      --shadow:0 14px 34px rgba(24,35,30,.10);--mono:'IBM Plex Mono',monospace;
+    }
+    *{box-sizing:border-box}
+    html{background:#cfd4cf}
+    body{margin:0;min-height:100vh;color:var(--ink);background:var(--paper);font-family:'Noto Sans SC',sans-serif;font-size:15px;line-height:1.65}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .shell{min-height:100vh;display:flex;flex-direction:column}
+    .utility{height:42px;background:#202824;color:#eaf0ec;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,48px);font:12px var(--mono);letter-spacing:.02em}
+    .utility .status{display:flex;gap:18px;align-items:center}.dot{width:7px;height:7px;border-radius:50%;background:#6dd2a4;display:inline-block;margin-right:7px;box-shadow:0 0 0 3px rgba(109,210,164,.12)}
+    .nav{height:58px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 clamp(16px,4vw,48px);gap:28px}
+    .crumb{font-size:13px;color:var(--muted)}.crumb b{color:var(--ink);font-weight:600}.nav-spacer{flex:1}
+    .identity{font-size:13px;text-align:right}.identity strong{display:block}.identity span{color:var(--muted);font-size:11px;font-family:var(--mono)}
+    .deadline{font:12px var(--mono);color:var(--amber);background:var(--amber-bg);padding:6px 9px;border-radius:3px}
+    .layout{width:min(1200px,100%);margin:0 auto;padding:28px clamp(14px,3vw,34px) 42px;display:grid;grid-template-columns:minmax(0,1fr) 286px;gap:24px;align-items:start}
+    .main{min-width:0}
+    .brief{border-bottom:1px solid var(--line);padding:0 0 22px;margin-bottom:20px;display:flex;gap:24px;justify-content:space-between;align-items:flex-end}
+    .brief h1{font-size:clamp(26px,4vw,39px);line-height:1.16;letter-spacing:-.03em;margin:0 0 8px;font-weight:700}.brief p{margin:0;color:var(--muted);max-width:620px}.cycle{text-align:right;white-space:nowrap}.cycle b{display:block;font:600 24px var(--mono)}.cycle span{font-size:12px;color:var(--muted)}
+    .search-panel{background:var(--white);border:1px solid var(--line);box-shadow:0 2px 8px rgba(27,38,33,.04);padding:16px;margin-bottom:18px}
+    .search-label{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}.search-label kbd{font:11px var(--mono);border:1px solid var(--line);padding:2px 5px;background:var(--paper)}
+    .search-row{display:flex;gap:8px}.search-row input{min-width:0;flex:1;height:47px;border:1px solid #9da8a2;border-radius:2px;padding:0 14px;color:var(--ink);outline:none;background:#fbfcfa}.search-row input:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(22,90,67,.12)}
+    .search-row button,.primary{border:0;background:var(--green);color:white;padding:0 22px;font-weight:600;border-radius:2px}.search-row button:hover,.primary:hover{background:#0f4936}
+    .search-note{margin-top:9px;font-size:12px;color:var(--muted)}
+    .notice{display:none;padding:11px 13px;margin-bottom:14px;border:1px solid #d7b276;background:var(--amber-bg);color:#6e470d;font-size:13px}.notice.show{display:block}.notice.success{border-color:#a9c8b8;background:var(--green2);color:var(--green)}
+    .result-head{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}.result-head h2{font-size:15px;margin:0}.result-head span{font:12px var(--mono);color:var(--muted)}
+    .result-list{display:grid;gap:10px}
+    .empty{border:1px dashed #b7bfba;padding:32px 18px;text-align:center;color:var(--muted);background:rgba(255,255,255,.42)}.empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:5px}
+    .doc-card{background:var(--white);border:1px solid var(--line);display:grid;grid-template-columns:86px 1fr auto;gap:16px;align-items:center;padding:16px;transition:border-color .15s}.doc-card:hover{border-color:#9daaa3}.doc-type{font:11px var(--mono);color:var(--muted);text-transform:uppercase}.doc-info h3{font-size:15px;margin:0 0 3px}.doc-info p{font-size:12px;color:var(--muted);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:620px}.open-doc{border:1px solid var(--line);background:#f8faf8;color:var(--green);padding:7px 10px;border-radius:2px;font-size:12px;font-weight:600}.open-doc:hover{border-color:var(--green)}
+    aside{position:sticky;top:18px;display:grid;gap:14px}.sidebox{background:#ecefeb;border:1px solid var(--line);padding:17px}.sidebox h2{font-size:13px;margin:0 0 12px}
+    .debug-progress{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.debug-progress strong{font:600 16px var(--mono);color:var(--green)}.debug-progress span{font-size:11px;color:var(--muted)}.progress-track{height:6px;margin-top:10px;background:#d1d8d3;overflow:hidden}.progress-fill{display:block;width:0;height:100%;background:var(--green);transition:width .2s ease}
+    .hint-toggle{width:100%;border:1px solid #aab3ad;background:#f7f8f6;color:var(--green);padding:9px 11px;text-align:left;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between}.hint-toggle:hover{border-color:var(--green)}.hint-toggle span{font:11px var(--mono)}
+    .hint{display:none;font-size:12px;color:var(--muted);margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line)}.hint.show{display:block}.hint b{color:var(--ink)}.hint p{margin:0}.hint-debug{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}.hint-debug h3{font-size:12px;color:var(--ink);margin:0 0 8px}
+    [hidden]{display:none!important}
+    .confidential{font:10px var(--mono);letter-spacing:.1em;color:#818985;border-top:1px solid var(--line);padding-top:12px;text-align:center}
+    dialog{border:0;padding:0;width:min(760px,calc(100% - 24px));max-height:min(84vh,850px);box-shadow:0 30px 80px rgba(10,16,13,.32);background:var(--white);color:var(--ink)}dialog::backdrop{background:rgba(18,23,21,.62)}
+    .doc-modal header{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;background:#f1f3f0}.doc-modal header span{font:11px var(--mono);color:var(--muted)}.doc-modal header b{font-size:14px}.doc-modal header button{margin-left:auto;border:0;background:transparent;font-size:23px;line-height:1;color:#606963;padding:2px 6px}
+    .doc-paper{padding:clamp(20px,5vw,45px);overflow:auto;max-height:calc(84vh - 53px)}.doc-paper .letterhead{border-bottom:2px solid var(--ink);padding-bottom:13px;margin-bottom:26px}.letterhead h2{margin:0 0 4px;font-size:20px;letter-spacing:-.01em}.letterhead div{font:11px var(--mono);color:var(--muted)}
+    .doc-body{white-space:pre-wrap;font-size:14px;line-height:1.9}.doc-body strong{font-weight:700;color:#101713}.doc-body .redact{background:#202522;color:#202522;padding:0 18px}.doc-stamp{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);font:10px var(--mono);color:var(--muted);display:flex;justify-content:space-between;gap:12px}
+    .decrypt-box{border:1px solid #aeb7b1;background:#f1f3f0;padding:18px;white-space:normal}.decrypt-box h3{margin:0 0 5px;font-size:16px}.decrypt-box p{margin:0 0 14px;color:var(--muted);font-size:13px}.decrypt-row{display:flex;gap:8px}.decrypt-row input{min-width:0;flex:1;height:43px;border:1px solid #8f9b94;background:#fff;padding:0 11px;outline:none}.decrypt-row input:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(22,90,67,.12)}.decrypt-row button{border:0;background:var(--green);color:#fff;padding:0 16px;font-weight:600}.decrypt-error{display:none;margin:10px 0 0!important;color:var(--red)!important;font-weight:600}.decrypt-error.show{display:block}.decrypt-success{margin:0 0 18px;padding:10px 12px;border:1px solid #a9c8b8;background:var(--green2);color:var(--green);font-weight:600;white-space:normal}
+    .endgate{display:none;margin-top:22px;background:#1f2723;color:#eef3f0;padding:24px;border-top:4px solid #a44a3f}.endgate.show{display:block}.endgate h2{font-size:20px;margin:0 0 7px}.endgate p{margin:0;color:#c6ceca;font-size:13px}.endgate button{margin-top:15px;background:#eef3f0;color:#17201d;border:0;padding:10px 15px;font-weight:700}
+    .ending{display:none;position:fixed;inset:0;background:#111613;color:#e8edea;z-index:20;overflow:auto;padding:max(34px,env(safe-area-inset-top)) 18px 50px}.ending.show{display:block}.ending-inner{width:min(720px,100%);margin:4vh auto}.ending .mono{font:11px var(--mono);color:#819087;letter-spacing:.08em}.ending h2{font-size:clamp(28px,6vw,48px);line-height:1.13;margin:18px 0 16px;letter-spacing:-.03em}.ending .reveal{font-size:15px;color:#c7d0cb;line-height:1.9;border-top:1px solid #39413d;padding-top:20px}.choice-area{margin-top:36px}.choice-area h3{font-size:15px;margin-bottom:14px}.choices{display:grid;gap:10px}.choice{width:100%;text-align:left;border:1px solid #536158;background:#18201c;color:#edf2ef;padding:15px}.choice:hover{border-color:#92ab9d;background:#202a25}.choice b{display:block;margin-bottom:3px}.choice span{font-size:12px;color:#aebbb4}.outcome{display:none;margin-top:30px;border-top:1px solid #39413d;padding-top:24px}.outcome.show{display:block}.outcome h3{font-size:21px;margin:0 0 9px}.outcome p{color:#c7d0cb;line-height:1.85}.outcome button{border:1px solid #7b8981;background:transparent;color:white;padding:9px 13px;margin-top:12px}.blink{animation:blink 1.1s step-end infinite}@keyframes blink{50%{opacity:.2}}
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+    @media(max-width:780px){.utility{height:38px}.utility .system{display:none}.nav{height:56px;gap:10px}.deadline{display:none}.identity{font-size:12px}.layout{display:block;padding-top:20px}.brief{align-items:flex-start}.cycle{display:none}.brief h1{font-size:27px}.search-row button{padding:0 16px}.doc-card{grid-template-columns:65px minmax(0,1fr);gap:8px 10px}.open-doc{grid-column:2;justify-self:start}.doc-info p{max-width:100%}aside{position:static;margin-top:22px}.sidebox{padding:15px}.doc-paper{padding:22px 18px}.doc-stamp{display:block}.doc-stamp span{display:block;margin-top:5px}}
+  </style>
+</head>
+<body>
+<div class="shell" id="app">
+  <div class="utility"><div class="system">INTRA / PEOPLE OPS / CALIBRATION</div><div class="status"><span><i class="dot"></i>企业网络已连接</span><span>FY26</span></div></div>
+  <nav class="nav"><div class="crumb">人才运营　/　<b>绩效校准</b></div><div class="nav-spacer"></div><div class="deadline">20:30 前提交</div><div class="identity"><strong>周岑 · 研发经理</strong><span>E-27104 · 入职 1 年</span></div></nav>
+
+  <div class="layout">
+    <main class="main">
+      <section class="brief">
+        <div><h1>第一次绩效评估</h1><p>你需要在今晚提交团队评级。员工目录、制度文件与内部记录已接入统一搜索；请先完成材料核验。</p></div>
+      </section>
+
+      <section class="search-panel" aria-label="内部资料搜索">
+        <div class="search-label"><span>检索内部文档、员工、工号或地点</span></div>
+        <form class="search-row" id="searchForm"><input id="searchInput" autocomplete="off" spellcheck="false" placeholder="输入关键词，例如：校准" aria-label="搜索关键词"><button id="searchButton" type="button">搜索</button></form>
+        <div class="search-note">搜索词越具体，结果越准确。可以从结果里的姓名、工号和地点继续查找。</div>
+      </section>
+      <div class="notice" id="notice" role="status"></div>
+      <section id="resultsView" hidden aria-live="polite" aria-labelledby="resultTitle">
+        <div class="result-head"><h2 id="resultTitle" tabindex="-1">搜索结果</h2><span id="resultCount">0 项</span></div>
+        <div class="result-list" id="results"></div>
+      </section>
+      <section class="endgate" id="endgate"><h2>你已经看到了不该看到的内容。</h2><p>校准系统解锁了最终提交流程。名单里，“待改进”一栏已经预填了林晓。</p><button id="enterEnding">进入最终校准 →</button></section>
+    </main>
+
+    <aside>
+      <section class="sidebox"><h2>调查提示</h2><button class="hint-toggle" id="hintToggle" type="button" aria-expanded="false" aria-controls="hint">查看提示 <span>＋</span></button><div class="hint" id="hint"><p id="hintText"><b>从这里开始：</b>搜索“校准”，先看清这套制度如何运转。</p><div class="hint-debug" aria-label="打开文档进度"><h3>打开文档进度</h3><div class="debug-progress"><strong id="openProgress">0 / 8</strong><span>关键文档</span></div><div class="progress-track" role="progressbar" aria-label="关键文档打开进度" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><i class="progress-fill" id="progressFill"></i></div></div></div></section>
+      <div class="confidential">INTERNAL · NEED TO KNOW</div>
+    </aside>
+  </div>
+</div>
+
+<dialog id="docDialog" class="doc-modal"><header><span id="modalType"></span><b id="modalTitle"></b><button id="closeDialog" aria-label="关闭">×</button></header><article class="doc-paper"><div class="letterhead"><h2 id="paperTitle"></h2><div id="paperMeta"></div></div><div class="doc-body" id="paperBody"></div><div class="doc-stamp"><span>内部资料 · 禁止外传</span><span id="paperId"></span></div></article></dialog>
+
+<section class="ending" id="ending" aria-live="polite"><div class="ending-inner"><div class="mono">CALIBRATION / FINAL REVIEW <span class="blink">■</span></div><h2>“待改进”不是评级。<br>是入库指令。</h2><div class="reveal" id="endingReveal"></div><div class="choice-area" id="choiceArea"><h3>这是整场游戏中唯一一次由你决定。</h3><div class="choices"><button class="choice" data-choice="submit"><b>把林晓加入最终名单</b><span>完成强制分布，保住自己的位置。</span></button><button class="choice" data-choice="expose"><b>向外部告密</b><span>把查到的证据发出去，阻止这份名单生效。</span></button><button class="choice" id="resignChoice" data-choice="resign" hidden><b>辞职，默默离开</b><span>不提交名单，不告密，也不让公司知道你看到了多少。</span></button></div></div><div class="outcome" id="outcome"></div></div></section>
+
+<script>
+const docs = [
+ {id:'CAL-260314',type:'会议',title:'FY26 年度绩效校准会通知',meta:'人力资源部 · 2026-03-11 · 全体经理',keywords:'校准 绩效 会议 hr 李静 3月14日 待改进',body:`各位经理：\n\nFY26 年度绩效校准会将于 3 月 14 日 14:00 在 12F-04 大会议室举行。请提前完成组员初评，并准备事实依据。\n\n注意：按公司政策，每个团队“待改进”比例不得低于 10%。未提交团队将自动继承系统建议名单。\n\n—— HRBP 李静`,critical:'强制比例',anomaly:'“待改进”比例不得低于 10%，即使团队没有明显低绩效员工。'},
+ {id:'POL-PERF-3.2',type:'制度',title:'绩效评分操作指南 v6.4',meta:'制度中心 · 所有人可见',keywords:'校准 绩效 评分 指南 强制分布 待改进 pip 组织优化',body:`3.2　强制分布\n“超出预期”不超过 15%；“待改进”不低于 10%。\n\n3.5　后续流程\n“待改进”员工进入 PIP。经校准委员会确认后，系统将根据岗位冗余度决定是否启动“组织优化流程”。\n\n3.8　数据保留\n组织优化对象的账号、门禁与医疗福利状态由“下游系统”统一处理，直属经理无需介入。`,critical:'异常流程',anomaly:'常规离职不需要“下游系统”接管门禁与医疗福利。'},
+ {id:'TEAM-27104',type:'名单',title:'周岑团队初评汇总',meta:'校准系统 · 自动生成',keywords:'校准 团队 林晓 待改进 名单 周岑',body:`共 8 人\n\n李文　　符合预期\n韩哲　　符合预期\n林晓　　待改进（系统建议）\n其余 5 人　符合预期\n\n建议依据：交付延期 3 次；跨部门协作分 2.7/5。\n直属经理评语：尚未填写。`,critical:null},
+ {id:'EMP-30211',type:'档案',title:'员工档案：林晓',meta:'工号 E-30211 · 搜索基础设施组',keywords:'林晓 E-30211 员工 待改进 绩效',body:`职位：软件工程师\n任职时间：2 年 4 个月\n最近绩效：符合预期 / 符合预期 / 系统建议待改进\n\n近两季度：\n• 延迟的 3 次交付均与“推理集群夜间紧急借调”冲突\n• 同行评审平均分 4.4/5\n• 跨部门协作评分 2.7/5（唯一评分人：算力平台主管 罗启明）\n\n系统参考案例：同组员工陈默（E-10482）在 FY25 被评为“待改进”，后于 2025-06-30 离职。\n\n员工备注：3 月 7 日提交过一份关于 B3 资源消耗异常的工单，现已撤回。`,critical:'被选中的人',anomaly:'系统建议与同行评价明显冲突；林晓此前调查过 B3。'},
+ {id:'SEP-10482',type:'人事',title:'离职记录：陈默',meta:'工号 E-10482 · 2025-06-30',keywords:'陈默 E-10482 离职 去年 低分 待改进 主动离职',body:`员工：陈默（E-10482）\n原部门：搜索基础设施组\nFY25 最终评级：待改进\n离职类型：主动离职\n最后工作日：2025-06-30\n离职面谈：[文件缺失]\n设备归还：[记录缺失]\n个人联系方式：[已清除]\n\n备注：OPT-IN / BATCH 07 / TRANSFER COMPLETE`,critical:'消失的员工',anomaly:'离职必需的面谈与设备归还记录同时缺失，却出现未知的批次转移备注。'},
+ {id:'SEC-B3-0714',type:'通行',title:'B3 服务通道夜间通行汇总',meta:'安全中心 · 2025-07-14',keywords:'B3 门禁 通行 02:17 转运任务 临时豁免 设备间',body:`2025-07-14 02:17:08\n入口：B3-SERVICE-02\n授权方式：转运任务临时豁免\n登记人员：罗启明、医务外包 2 人\n随行货物：密封活体转运箱 1 件\n目的区域：北侧限制区\n离开记录：无\n\n系统注释：任务对象按转运货物管理，不登记人员身份，不产生员工门禁记录。`,critical:'异常转运',anomaly:'B3 只登记执行转运的人。被强制带走的任务对象按“货物”处理，因此没有陈默刷卡或进入的记录。'},
+ {id:'CAPTURE-RECORD',showCode:false,locked:true,password:'WX-260315-07',type:'加密档案',title:'特殊转运任务执行记录',meta:'访问受限 · 口令保护',keywords:'特殊转运 转运任务 抓捕 陈默 镇静 医务外包 暴力 活体转运',body:`任务日期：2025-07-14\n任务对象：陈默\n执行地点：公司宿舍 7 栋 402\n现场监督：罗启明\n执行人员：医务外包 4 人\n\n01:40　任务对象开门后拒绝配合，并试图呼救。执行人员强行进入。\n01:42　四人将任务对象压倒并使用束缚带控制。反抗过程中造成右腕挫伤、面部裂伤。\n01:45　任务对象持续喊“我没有自愿离职”。按处置预案注射镇静剂。\n01:49　确认失去行动能力，加戴静音面罩，装入活体转运箱。\n02:05　车辆抵达总部 B3 服务通道。\n\n同意状态：未取得本人同意\n人事包装：主动离职\n接收批次：BATCH 07`,critical:'暴力抓捕记录',anomaly:'陈默不是自愿离职。他被人从宿舍暴力制服、注射镇静剂后，以“活体转运箱”送入 B3。'},
+ {id:'MEM-OC-II',type:'备忘录',title:'“有机算力”项目二期扩容',meta:'算力平台 · 权限继承异常',keywords:'有机算力 有机 组织优化 基质 扩容 B3 罗启明 36 组',body:`收件人：罗启明、校准委员会、B3 运维\n主题：OC 二期扩容 / 基质补充\n\n现有皮层基质单元 36 组，在线 31 组，平均有效吞吐较硅基方案提升 18.7%。下季度需补充 8–10 组基质。\n\n来源：组织优化流程。\n筛选优先级：25–40 岁；无重大基础疾病；高认知负载岗位；社会关系简单。\n\n人力侧只需提交最终校准名单。后续转运统一包装为“离职关怀”。\n\n附件：HCU 编号映射表（受限）`,critical:'有机算力',anomaly:'文件把“组织优化”的员工称为皮层基质，并明确按生理条件筛选。'},
+ {id:'HCU-MAP-17',type:'受限档案',title:'HCU-17 单元生命周期记录',meta:'B3 生物计算设施 · 高度机密',keywords:'HCU HCU-17 17 E-10482 基质 大脑 后台 计算 皮层',body:`来源员工：E-10482\n接收批次：BATCH 07\n单元编号：HCU-17\n\n2025-07-14　完成神经组织分离\n2025-07-16　皮层阵列接入\n2025-07-21　语言区抑制完成\n2025-08-03　首次稳定推理\n\n当前状态：ONLINE\n分配任务：推荐系统长尾召回 / 夜间批处理\n\n维护备注：单元在低负载时持续输出重复 token：“我没有自愿”。已加入噪声过滤。`,critical:'HCU-17',anomaly:'E-10482 仍以生物计算单元的形式“在线”，并反复输出“我没有自愿”。'},
+ {id:'OPS-COFFEE-0315',type:'行政',title:'12F 茶水间咖啡机维修通知',meta:'行政服务 · 2026-03-12',keywords:'咖啡机 维修 12F 十二楼 通知 行政 报修单号 WX-260315-07',body:`12F 茶水间咖啡机将于 3 月 15 日 10:00–12:00 停机维护，期间请前往 11F 取用。\n\n维护期间提供挂耳咖啡与热水。给您带来不便，敬请谅解。\n\n报修单号：WX-260315-07`,critical:null},
+ {id:'ACT-Q1-0322',type:'活动',title:'Q1 团建报名：古北水镇一日游',meta:'员工体验组 · 2026-03-10',keywords:'团建 报名 旅游 古北水镇 3月22日',body:`活动日期：3 月 22 日\n集合地点：公司北门\n名额：40 人，先到先得\n\n请穿着舒适运动鞋。因天气原因取消将另行通知。`,critical:null},
+ {id:'SEC-PHISH-90',type:'安全',title:'关于近期钓鱼邮件的安全提醒',meta:'信息安全部 · 2026-03-08',keywords:'安全 钓鱼 邮件 密码 提醒 90天',body:`近期钓鱼邮件增多，请勿点击来源不明的链接或扫描陌生二维码。密码需包含大小写字母、数字与特殊符号，每 90 天更换一次。\n\n信息安全部不会通过邮件索要密码。`,critical:null},
+ {id:'LOST-UMB-1210',type:'失物',title:'失物招领：黑色雨伞',meta:'前台 · 2026-03-10',keywords:'失物招领 雨伞 黑色 12F 会议室',body:`3 月 10 日在 12F-04 会议室拾获黑色长柄雨伞一把。伞柄有银色字母贴。请失主到一层前台描述贴纸内容后领取。`,critical:null},
+ {id:'BUY-ORG-0313',type:'福利',title:'本周有机蔬菜团购',meta:'行政服务 · 2026-03-13',keywords:'有机 蔬菜 团购 西红柿 鸡蛋',body:`本周有机西红柿 12 元/斤，有机鸡蛋 25 元/盒。周五统一配送至一层前台。\n\n本期团购满 300 元免配送费。`,critical:null},
+ {id:'TECH-OPT-0320',type:'分享',title:'高并发场景下的代码优化实践',meta:'技术委员会 · 2026-03-09',keywords:'优化 代码 组织优化 高并发 分享会',body:`时间：3 月 20 日 16:00\n地点：11F 多功能厅\n主讲：架构组王磊\n\n内容包括热点识别、锁竞争与批处理调优。欢迎线上旁听。`,critical:null},
+ {id:'FAC-B3-JUL',type:'巡检',title:'B3 设备间 7 月巡检记录',meta:'物业设施 · 2025-07-31',keywords:'B3 设备间 巡检 空调 UPS 物业',body:`制冷主机：正常\nUPS：无告警\n湿度：41%\n生物废弃物冷柜：2 号温度异常，已通知“医疗外包”处理\n\n巡检人：物业 / 张师傅\n注：北侧玻璃后的设备不属于物业巡检范围。`,critical:null},
+ {id:'FIN-SERVER-36',type:'采购',title:'36 台推理服务器资产盘点',meta:'财务资产 · 2026-02-28',keywords:'36 服务器 推理 资产 算力 盘点',body:`推理服务器共 36 台，其中在线 31 台，维修 5 台。\n\n该批设备位于东区数据中心，与总部 B3 设备间无关。请各部门于月底前确认资产标签。`,critical:null},
+ {id:'MED-WELLNESS',type:'福利',title:'年度体检常见问题',meta:'员工健康 · 2026-02-20',keywords:'体检 医疗 健康 基础疾病 福利',body:`年度体检可预约 12 家合作机构。报告仅对员工本人可见，公司只接收是否完成体检的状态。\n\n如需改期，请提前 24 小时取消。`,critical:null},
+ {id:'CHAT-LX-0307',type:'工单',title:'B3 资源消耗异常（已撤回）',meta:'提交人：林晓 / E-30211',keywords:'林晓 E-30211 B3 工单 资源消耗 撤回 夜间 推理',body:`现象：夜间推理流量为零时，B3 专线仍持续上行 4.2TB，数据类型无法识别。\n\n附注：我联系过罗启明，他让我不要再查，说“这是人力资源的事，不是算力的事”。这句话是什么意思？\n\n状态：已由管理员撤回\n撤回人：LQMING / 罗启明`,critical:null},
+ {id:'DIR-LQMING',type:'员工',title:'员工目录：罗启明',meta:'算力平台主管 · E-00819',keywords:'罗启明 LQMING E-00819 算力平台 B3',body:`职位：算力平台部负责人\n兼任：FY26 校准委员会技术顾问\n权限组：B3-OPS / OC-PROGRAM / HR-DOWNSTREAM\n\n办公地点：12F\n助理备注：罗总每周三 22:00 参加 B3 维护窗口。`,critical:null},
+ {id:'MENU-0314',type:'餐饮',title:'员工餐厅 3 月 14 日菜单',meta:'园区服务 · 每日更新',keywords:'3月14日 菜单 餐厅 有机 午餐',body:`午餐：番茄牛腩、清炒时蔬、菌菇豆腐\n晚餐：咖喱鸡、蒜蓉生菜、玉米排骨汤\n\n标注菜品均不含花生制品。`,critical:null}
+];
+const emphasis={
+ 'CAL-260314':['“待改进”比例不得低于 10%','自动继承系统建议名单'],
+ 'POL-PERF-3.2':['“待改进”不低于 10%','“组织优化流程”','“下游系统”统一处理'],
+ 'EMP-30211':['同行评审平均分 4.4/5','唯一评分人：算力平台主管 罗启明','同组员工陈默（E-10482）在 FY25 被评为“待改进”','B3 资源消耗异常的工单，现已撤回'],
+ 'SEP-10482':['离职面谈：[文件缺失]','设备归还：[记录缺失]','OPT-IN / BATCH 07 / TRANSFER COMPLETE'],
+ 'SEC-B3-0714':['密封活体转运箱 1 件','离开记录：无','任务对象按转运货物管理，不登记人员身份'],
+ 'CAPTURE-RECORD':['“我没有自愿离职”','同意状态：未取得本人同意','人事包装：主动离职','接收批次：BATCH 07'],
+ 'MEM-OC-II':['现有皮层基质单元 36 组','来源：组织优化流程','筛选优先级：25–40 岁；无重大基础疾病；高认知负载岗位；社会关系简单','转运统一包装为“离职关怀”'],
+ 'HCU-MAP-17':['来源员工：E-10482','完成神经组织分离','当前状态：ONLINE','“我没有自愿”'],
+ 'CHAT-LX-0307':['B3 专线仍持续上行 4.2TB','“这是人力资源的事，不是算力的事”','状态：已由管理员撤回','撤回人：LQMING / 罗启明']
+};
+const requiredEvidence=[0,1,2,3,4,6,7,8];
+let found=new Set(); let searches=0; let currentResults=[];
+const $=s=>document.querySelector(s);
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderBody(d){let html=esc(d.body);(emphasis[d.id]||[]).forEach(term=>{const safe=esc(term);html=html.split(safe).join(`<strong>${safe}</strong>`)});return html}
+function renderResults(){const box=$('#results');$('#resultCount').textContent=`${currentResults.length} 项`;if(!currentResults.length){box.innerHTML=`<div class="empty"><strong>未找到匹配资料</strong>换一个更具体的姓名、工号或地点。</div>`;return}box.innerHTML=currentResults.map(d=>`<article class="doc-card"><div class="doc-type">${d.type}</div><div class="doc-info"><h3>${d.title}</h3><p>${d.meta}</p></div><button class="open-doc" data-id="${d.id}">查看资料</button></article>`).join('');box.querySelectorAll('button').forEach(b=>b.onclick=()=>openDoc(b.dataset.id))}
+function updateCompletion(){const opened=requiredEvidence.filter(i=>found.has(i)).length;$('#openProgress').textContent=`${opened} / ${requiredEvidence.length}`;$('#progressFill').style.width=`${opened/requiredEvidence.length*100}%`;$('.progress-track').setAttribute('aria-valuenow',String(opened));if(opened===requiredEvidence.length)$('#endgate').classList.add('show')}
+function updateHint(){let text='';if(!found.has(0))text='<b>从这里开始：</b>搜索“校准”，先看清这套制度如何运转。';else if(!found.has(2))text='<b>名单中有人被系统标记。</b>搜索她的姓名。';else if(!found.has(3))text='<b>去年也有人拿到低分。</b>档案里出现了“陈默”。';else if(!found.has(4))text='<b>工号不会重名。</b>搜索陈默的工号 E-10482。';else if(!found.has(6))text='<b>B3 通行记录提到活体转运。</b>搜索“有机算力”。想追查转运细节，可以另外搜索“特殊转运”。';else if(!found.has(7))text='<b>附件留下了单元代号。</b>搜索“HCU-17”。';else if(!found.has(8))text='<b>林晓调查过同一个地方。</b>搜索“B3 资源消耗”。';else text='<b>证据链完整。</b>最终校准流程已经解锁。加密档案不是进入结局的必要条件。';$('#hintText').innerHTML=text}
+function mark(d){const map={'CAL-260314':0,'POL-PERF-3.2':1,'EMP-30211':2,'SEP-10482':3,'SEC-B3-0714':4,'CAPTURE-RECORD':5,'MEM-OC-II':6,'HCU-MAP-17':7,'CHAT-LX-0307':8};if(map[d.id]!==undefined)found.add(map[d.id]);updateCompletion();updateHint()}
+function openDoc(id){const d=docs.find(x=>x.id===id);if(!d)return;$('#modalType').textContent=d.type.toUpperCase();$('#modalTitle').textContent=d.locked?'口令保护':'内部资料';$('#paperTitle').textContent=d.title;$('#paperMeta').textContent=d.meta;$('#paperId').textContent=d.locked?'加密档案 · 访问已留痕':'内部归档';const body=$('#paperBody');if(d.locked&&!d.unlocked){body.innerHTML=`<div class="decrypt-box"><h3>文件内容已加密</h3><p>口令提示：查看本月 12F 茶水间咖啡机维修通知中的“报修单号”。</p><form class="decrypt-row" id="decryptForm"><input id="decryptInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="done" placeholder="输入解密口令" aria-label="解密口令" aria-describedby="decryptError"><button id="decryptButton" type="button">解锁</button></form><p class="decrypt-error" id="decryptError" role="alert" aria-live="assertive">密码错误，请检查报修单号后重试。</p></div>`;$('#docDialog').showModal();$('#hintText').innerHTML='<b>档案需要口令。</b>搜索“咖啡机维修”，找到通知里的报修单号。';const submitDecrypt=e=>{if(e)e.preventDefault();decryptDoc(d)};$('#decryptButton').onclick=submitDecrypt;$('#decryptForm').onsubmit=submitDecrypt;$('#decryptInput').onkeydown=e=>{if(e.key==='Enter')submitDecrypt(e)};setTimeout(()=>$('#decryptInput').focus(),0);return}body.innerHTML=renderBody(d);$('#docDialog').showModal();mark(d)}
+function decryptDoc(d){const input=$('#decryptInput');const error=$('#decryptError');if(!input||!error||!d)return;const raw=String(input.value||'');const normalized=typeof raw.normalize==='function'?raw.normalize('NFKC'):raw;const entered=normalized.trim().toUpperCase().replace(/[‐‑‒–—−]/g,'-').replace(/\s+/g,'');const expected=String(d.password||'').toUpperCase();if(entered!==expected){input.setAttribute('aria-invalid','true');error.textContent='密码错误，请检查报修单号后重试。';error.classList.add('show');input.focus();input.select();return}input.removeAttribute('aria-invalid');error.classList.remove('show');d.unlocked=true;$('#paperBody').innerHTML=`<p class="decrypt-success" role="status">解密成功，文件内容已打开。</p>${renderBody(d)}`;$('#paperBody').scrollTop=0;mark(d)}
+$('#closeDialog').onclick=()=>$('#docDialog').close();$('#docDialog').addEventListener('click',e=>{if(e.target===$('#docDialog'))$('#docDialog').close()});
+function performSearch(){
+  const raw=$('#searchInput').value.trim();
+  const q=raw.toLowerCase();
+  const n=$('#notice');
+  n.classList.remove('show','success');
+  if(!q){
+    $('#resultsView').hidden=true;
+    n.textContent='请输入关键词。';
+    n.classList.add('show');
+    n.scrollIntoView({block:'nearest'});
+    return;
+  }
+  searches++;
+  const score=d=>{
+    const title=d.title.toLowerCase(),meta=d.meta.toLowerCase(),keywords=d.keywords.toLowerCase(),body=d.body.toLowerCase();
+    if(title===q)return 5;
+    if(title.includes(q))return 4;
+    if(meta.includes(q))return 3;
+    if(keywords.includes(q))return 2;
+    if(body.includes(q))return 1;
+    return 0;
+  };
+  currentResults=docs.filter(d=>score(d)>0).sort((a,b)=>score(b)-score(a)||docs.indexOf(a)-docs.indexOf(b));
+  $('#resultTitle').textContent=`“${raw}” 的相关文档`;
+  $('#resultsView').hidden=false;
+  renderResults();
+  if(currentResults.length){
+    n.textContent=`找到 ${currentResults.length} 份相关文档。`;
+    n.classList.add('show','success');
+  }else{
+    n.textContent=`未找到与“${raw}”相关的文件。请换一个姓名、工号、地点或代号。`;
+    n.classList.add('show');
+  }
+  requestAnimationFrame(()=>{
+    $('#resultTitle').focus({preventScroll:true});
+    $('#resultsView').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+}
+$('#searchButton').addEventListener('click',performSearch);
+$('#searchForm').addEventListener('submit',e=>{e.preventDefault();performSearch()});
+$('#searchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();performSearch()}});
+document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==$('#searchInput')){e.preventDefault();$('#searchInput').focus()}if(e.key==='Escape'&&$('#docDialog').open)$('#docDialog').close()});
+$('#hintToggle').onclick=()=>{const open=$('#hintToggle').getAttribute('aria-expanded')==='true';$('#hintToggle').setAttribute('aria-expanded',String(!open));$('#hintToggle').firstChild.textContent=open?'查看提示 ':'收起提示 ';$('#hintToggle span').textContent=open?'＋':'－';$('#hint').classList.toggle('show',!open)};
+$('#enterEnding').onclick=()=>{const captureRead=docs.find(d=>d.id==='CAPTURE-RECORD').unlocked===true;$('#endingReveal').innerHTML=`B3 没有服务器。至少，没有通常意义上的服务器。<br><br>那里有 36 个维生舱。每个舱里只保留一颗大脑，脑干连接营养循环，皮层接入公司的推理集群。去年被“优化”的陈默，就是 HCU-17。生命周期记录显示，他仍在低负载时重复输出“我没有自愿”。${captureRead?'<br><br>你解开的转运档案补上了最后一块：陈默并非主动离职。医务外包在宿舍将他暴力制服、注射镇静剂，再作为“活体转运箱”送进 B3。':''}<br><br>屏幕右侧弹出新消息：<br><strong>「校准主持人：周经理，只差你了。请确认本年度基质名单。」</strong>`;$('#resignChoice').hidden=!captureRead;$('#ending').classList.add('show');document.body.style.overflow='hidden'};
+document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>choose(b.dataset.choice));
+function choose(c){const o=$('#outcome');$('#choiceArea').style.display='none';const endings={
+ submit:['结局：合格的经理',`你把林晓加入最终名单，按下“提交”。系统没有确认弹窗。\n\n22:07，林晓的账号变灰。22:31，B3 新增单元 HCU-37。第二天，你收到晋升预告，理由是“在困难决策中展现了组织成熟度”。\n\n三个月后，你第一次在深夜推荐日志里看见一行无法解析的输出：周经理，我以为你会继续查下去。`],
+ expose:['结局：下一批',`你把证据发往外部举报邮箱。发送进度走到 100%，邮件状态却显示：“已安全转交内部合规团队”。\n\n办公室门在身后落锁。罗启明带着四名医务外包从电梯里走出来。你还没来得及拔掉电脑，针头已经刺进手臂。\n\n醒来前的最后一眼，是屏幕上刚生成的转运任务：对象 E-27104，状态——已抓获。`],
+ resign:['结局：默默离开',`你关掉校准页面，没有提交名单，也没有发送任何文件。\n\n第二天清晨，你递交辞呈，只写“个人原因”。你不再搜索 B3，不再联系林晓，也不再回头。公司接受得异常迅速。\n\n一个月后，你在另一座城市开始新工作。偶尔深夜醒来，你会想起那份加密档案，然后提醒自己：至少这一次，你离开了。`]
+};o.innerHTML=`<div class="mono">FINAL STATE / RECORDED</div><h3>${endings[c][0]}</h3><p>${endings[c][1].replace(/\n/g,'<br>')}</p><button onclick="location.reload()">重新开始</button>`;o.classList.add('show');o.scrollIntoView({behavior:'smooth',block:'start'})}
+updateCompletion();updateHint();
+</script>
+</body>
+</html>
