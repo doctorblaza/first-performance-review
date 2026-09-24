@@ -1,13 +1,13 @@
-# First Performance Review
+# 第一次绩效评估
 
-A keyword-search investigation game. You are a new manager preparing your first
-performance calibration — dig through the company archive, piece together what
-happened to a missing employee, and decide what to do with what you find.
+一款关键词搜索调查游戏。你是一名准备第一次绩效校准的新经理——
+在公司档案库里翻找，拼凑出一位失踪员工身上发生的事，
+然后决定如何处置你找到的东西。
 
-- No choices until the very end — everything is found by searching.
-- Collect all 8 key documents to unlock the final decision.
-- One encrypted file is optional; decrypting it unlocks a third ending.
+- 结局之前没有选项，所有线索都靠搜索找到。
+- 集齐 8 份关键文档，解锁最终抉择。
+- 有一份加密文件是可选的；解密它会解锁第三个结局。
 
-Play it here: https://doctorblaza.github.io/first-performance-review/
+在线游玩：https://doctorblaza.github.io/first-performance-review/
 
-Single-file build (`index.html`). Chinese-language game.
+单文件构建（`index.html`）。
